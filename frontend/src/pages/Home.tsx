@@ -34,7 +34,7 @@ export default function HomePage() {
           {loading ? (
             <p className="text-gray-500">Loading...</p>
           ) : (
-            <p className="text-4xl font-bold text-green-900">{productCount}</p>
+            <p className="text-4xl font-bold text-green-900" data-testid="product-count">{productCount}</p>
           )}
         </Card>
       </div>

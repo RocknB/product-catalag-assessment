@@ -172,6 +172,7 @@ export default function ProductsPage() {
                         placeholder="Search by name, category, or description"
                         value={searchKeyword}
                         onChange={(e) => setSearchKeyword(e.target.value)}
+                        data-testid="search-input"
                         className="input-field flex-1"/>
                     <Button
                         onClick={() => setSearchKeyword("")}
@@ -208,7 +209,7 @@ export default function ProductsPage() {
                         </thead>
                         <tbody>
                             {filteredProducts.map((product) => (
-                                <tr key={product.id} className="hover:bg-gray-50">
+                                <tr key={product.id} data-testid={`product-row-${product.id}`} className="hover:bg-gray-50">
                                     <td className="px-4 py-2 border-b">{product.name}</td>
                                     <td className="px-4 py-2 border-b">
                                         {product.description || "-"}
@@ -245,7 +246,7 @@ export default function ProductsPage() {
 
             {isModalOpen && (
                 <div className="fixed inset-0 bg-white/30 backdrop-blur-sm flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl">
+                    <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl" data-testid="product-modal">
                         <h2 className="text-xl font-bold mb-4">
                             {editingProduct ? "Edit Product" : "Add Product"}
                         </h2>
@@ -258,10 +259,11 @@ export default function ProductsPage() {
                         
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4">
-                                <label className="block text-sm font-medium mb-1">
+                                <label htmlFor="product-name" className="block text-sm font-medium mb-1">
                                     Name *
                                 </label>
                                 <input
+                                    id="product-name"
                                     type="text"
                                     value={formData.name}
                                     onChange={handleFieldChange("name")}
@@ -271,10 +273,11 @@ export default function ProductsPage() {
                             </div>
 
                             <div className="mb-4">
-                                <label className="block text-sm font-medium mb-1">
+                                <label htmlFor="product-description" className="block text-sm font-medium mb-1">
                                     Description
                                 </label>
                                 <textarea
+                                    id="product-description"
                                     value={formData.description}
                                     onChange={handleFieldChange("description")}
                                     rows={3}
@@ -283,10 +286,11 @@ export default function ProductsPage() {
                             </div>
 
                             <div className="mb-4">
-                                <label className="block text-sm font-medium mb-1">
+                                <label htmlFor="product-price" className="block text-sm font-medium mb-1">
                                     Price *
                                 </label>
                                 <input
+                                    id="product-price"
                                     type="number"
                                     min="0"
                                     value={formData.price}
@@ -297,10 +301,11 @@ export default function ProductsPage() {
                             </div>
 
                             <div className="mb-4">
-                                <label className="block text-sm font-medium mb-1">
+                                <label htmlFor="product-category" className="block text-sm font-medium mb-1">
                                     Category *
                                 </label>
                                 <select
+                                    id="product-category"
                                     value={formData.categoryId}
                                     onChange={handleFieldChange("categoryId")}
                                     required
