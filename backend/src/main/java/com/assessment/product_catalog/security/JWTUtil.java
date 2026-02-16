@@ -6,8 +6,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -15,56 +15,51 @@ import java.util.Date;
 @Component
 public class JWTUtil {
 
-    @Value("${jwt_secret}")
+    private static final String ISSUER = "product-catalog-assessment";
+
+    @Value("${jwt.secret}")
     private String secret;
 
+    private Algorithm algorithm;
+    private JWTVerifier verifier;
+
+    @PostConstruct
+    public void init() {
+        // Initialize algorithm and verifier once to ensure consistency
+        this.algorithm = Algorithm.HMAC256(secret.trim());
+        this.verifier = JWT.require(algorithm)
+                .withIssuer(ISSUER)
+                .build();
+    }
+
     public String generateToken(String username) {
-
         try {
-        Algorithm algorithm = Algorithm.HMAC256(secret);
-
-        return JWT.create()
-                .withSubject("User Details")
-                .withClaim("username", username)
-                .withIssuedAt(new Date())
-                .withIssuer("product-catalog-assessment")
-                .sign(algorithm);
+            return JWT.create()
+                    .withSubject(username)
+                    .withIssuedAt(new Date())
+                    .withIssuer(ISSUER)
+                    .sign(algorithm);
         } catch (JWTCreationException exception) {
             throw new RuntimeException("Error generating token", exception);
         }
-
     }
 
-    public String validateTokenAndRetrieveSubject(String token) throws
-            JWTVerificationException{
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
-                .withSubject("User Details")
-                .withIssuer("product-catalog-assessment")
-                .build();
-
-        DecodedJWT jwt = verifier.verify(token);
-        return jwt.getClaim("username").asString();
-    }
-
-    public boolean isTokenValid(String token, UserDetails userDetails) {
+    /**
+     * Validates the token and returns the decoded JWT if valid.
+     * Returns null if the token is invalid.
+     */
+    public DecodedJWT validateToken(String token) {
         try {
-            final String username = extractUsername(token);
-            return username.equals(userDetails.getUsername());
+            return verifier.verify(token);
         } catch (JWTVerificationException e) {
-            return false;
+            return null;
         }
     }
 
-    public String extractUsername(String token) {
-        return decodeToken(token).getSubject();
+    /**
+     * Extracts username from an already validated/decoded JWT.
+     */
+    public String extractUsername(DecodedJWT decodedJWT) {
+        return decodedJWT.getSubject();
     }
-
-    private DecodedJWT decodeToken(String token) {
-        Algorithm algorithm = Algorithm.HMAC256(secret);
-        return JWT.require(algorithm)
-                .build()
-                .verify(token);
-    }
-
-
 }

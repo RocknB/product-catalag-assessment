@@ -26,6 +26,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+import static com.assessment.product_catalog.utils.Constants.USER_ROLE;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -47,7 +49,8 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/user/**").hasRole("USER")
+                        .requestMatchers("/api/user/**").hasRole(USER_ROLE)
+                        .requestMatchers("/api/products/**").hasRole(USER_ROLE)
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

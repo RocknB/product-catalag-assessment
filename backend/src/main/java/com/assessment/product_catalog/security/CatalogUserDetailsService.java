@@ -13,8 +13,10 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.Optional;
 
+import static com.assessment.product_catalog.utils.Constants.USER_ROLE;
+
 @Component
-public class CatalogUserDetailsService implements  UserDetailsService {
+public class CatalogUserDetailsService implements UserDetailsService {
 
     @Autowired
     private CatalogUserRepository catalogUserRepository;
@@ -23,16 +25,15 @@ public class CatalogUserDetailsService implements  UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<CatalogUser> userRes = catalogUserRepository.findByUsername(username);
 
-        if(userRes.isEmpty())
-            throw new UsernameNotFoundException("No user found with this username "+username);
+        if (userRes.isEmpty())
+            throw new UsernameNotFoundException("No user found with this username " + username);
+
         CatalogUser user = userRes.get();
         return new
             User(
                 username,
                 user.getPassword(),
-                Collections.singletonList(
-                        new SimpleGrantedAuthority("ROLE_USER")
-                )
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + USER_ROLE))
         );
     }
 }
