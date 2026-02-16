@@ -41,6 +41,10 @@ public class ProductService {
                 .map(productMapper::toResponse)
                 .collect(Collectors.toList());
     }
+    
+    public int getActiveProductCount() {
+        return productRepository.countByActiveTrue();
+    }
 
     public ProductResponse getProductById(Long id) {
         Product product = productRepository.findById(id)

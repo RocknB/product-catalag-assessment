@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../services/api";
-import type { LoginResponse } from "../types";
+import { authService } from "../services";
+import { Button } from "../components";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -16,14 +16,11 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await api.post<LoginResponse>("/auth/login", {
-        username,
-        password,
-      });
+      const data = await authService.login(username, password);
 
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("username", response.data.username);
-      localStorage.setItem("role", response.data.role);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("username", data.username);
+      localStorage.setItem("role", data.role);
 
       navigate("/home");
 
@@ -70,9 +67,9 @@ export default function LoginPage() {
 
           {error && <p className="text-red-900 text-sm bg-red-50 p-3 rounded-lg">{error}</p>}
 
-          <button className="main-button" type="submit" disabled={loading}>
+          <Button className="w-full mt-6" type="submit" disabled={loading}>
             {loading ? "Logging in..." : "Log in"}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

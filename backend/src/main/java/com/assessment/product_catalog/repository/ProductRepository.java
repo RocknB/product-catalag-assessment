@@ -13,4 +13,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByCategoryIdAndActiveTrue(Long categoryId);
     Optional<Product> findByNameAndActiveTrue(String name);
     Optional<Product> findByName(String name);
+    
+    int countByActiveTrue();
 }

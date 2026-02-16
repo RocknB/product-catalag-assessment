@@ -23,6 +23,11 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllActiveProducts());
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getProductCount() {
+        return ResponseEntity.ok(productService.getActiveProductCount());
+    }
+
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<ProductResponse>> getProductsByCategory(
             @PathVariable Long categoryId) {
